@@ -1,0 +1,62 @@
+﻿@model CrudUsingJQueryUpdated.Models.EmployeeInfo
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend></legend>
+
+        <div class="editor-label">
+            Employee Name
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.EmpName)
+            @Html.ValidationMessageFor(model => model.EmpName)
+        </div>
+
+        <div class="editor-label">
+            Contact
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Contact)
+            @Html.ValidationMessageFor(model => model.Contact)
+        </div>
+
+        <div class="editor-label">
+            Email ID
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.EmailId)
+            @Html.ValidationMessageFor(model => model.EmailId)
+        </div>
+
+        <p>
+            <input type="button" value="Create" onclick="SaveEmployee()" />
+        </p>
+    </fieldset>
+}
+<div>
+    @Html.ActionLink("Close", "Index")
+</div>
+
+<link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/jquery-ui-1.10.4/themes/base/jquery-ui.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/jquery-ui-1.10.4/ui/minified/jquery-ui.min.js")" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+    function SaveEmployee() {
+        var EmpName = $("#EmpName").val();
+        var Contact = $("#Contact").val();
+        var EmailId = $("#EmailId").val();
+
+        var Employee = {
+            "EmpName": EmpName, "Contact": Contact,
+            "EmailId": EmailId
+        };
+
+        $.post("/EmployeeInfo/Create", Employee,
+        function (data) { if (data == 0) { location = location.href; } }, 'json');
+    }
+</script>  

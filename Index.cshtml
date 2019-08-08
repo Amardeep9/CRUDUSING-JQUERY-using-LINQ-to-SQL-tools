@@ -1,0 +1,108 @@
+﻿@*@model CrudUsingJQueryUpdated.Models.EmployeeInfo
+
+    @{
+        ViewBag.Title = "Index";
+    }
+
+    <h2>Index</h2>*@
+
+@{
+    Layout = null;
+    WebGrid webGrid = new WebGrid(source: Model);
+}
+
+@model List<CrudUsingJQueryUpdated.EmployeeData>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    <style type="text/css">
+        .grid {
+            width: 100%;
+        }
+    </style>
+}
+
+<div style="padding:7px 0;">
+    <input type="button" value="Add New Employee" onclick="CreateEmployee()" />
+</div>
+
+<div id='OpenDilog'></div>
+
+<h3>Employee Information List</h3>
+
+<div style="width:100%;">
+    @{
+        WebGrid grid = new WebGrid(Model);
+        @grid.GetHtml(
+             tableStyle: "grid",
+             fillEmptyRows: false,
+             mode: WebGridPagerModes.All,
+             firstText: "<< First",
+             previousText: "< Prev",
+             nextText: "Next >",
+             lastText: "Last >>",
+             columns: new[] {
+             grid.Column("EmpID",header: "ID"),
+             grid.Column("EmpName",header: "Name"),
+             grid.Column("Contact"),
+             grid.Column("EmailId"),
+             grid.Column("EmpID", header: "Action", canSort:false,
+
+         format: @<text>
+    @Html.Raw("<img src='/images/edit.png' title='Edit' onclick='EditEmployee(" + item.EmpID + ")' />")
+    @Html.Raw("<img src='/images/delete.png' title='Edit' onclick='DeleteEmployee(" + item.EmpID + ")' />")
+        </text>
+)
+})
+    }
+</div>
+
+<link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/jquery-ui-1.10.4/themes/base/jquery-ui.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/jquery-ui-1.10.4/ui/minified/jquery-ui.min.js")" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+
+
+    function CreateEmployee() {
+        var div = $("#OpenDilog");
+        div.load("/EmployeeInfo/Create", function () {
+            div.dialog({
+                modal: true,
+                width: 500,
+                height: 400,
+                title: "Add New Employee",
+                resizable: false
+            });
+        });
+    }
+
+    function EditEmployee(E_ID) {
+        var ph = $("#OpenDilog");
+        ph.load("/EmployeeInfo/Edit?EmpID=" + E_ID, function () {
+            ph.dialog({
+                modal: true,
+                width: 500,
+                height: 400,
+                title: "Edit Employee",
+                resizable: false
+            });
+        });
+    }
+
+    function DeleteEmployee(E_ID) {
+        if (confirm("Are You Sure Delete Selected Employee Record No.? " + E_ID)) {
+            var data = { 'EmpID': E_ID }
+            $.post('/EmployeeInfo/Delete', data,
+                function (data) {
+                    if (data == true)
+                        location = location.href;
+                    else
+                        alert("Not delete something Wrong");
+                });
+        }
+        }
+
+ </script>
